@@ -1,10 +1,6 @@
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open('baduk-trainer-v2').then((cache) => cache.addAll(['./','./index.html','./manifest.json']))
-  );
+  event.waitUntil(caches.open('baduk-trainer-v3').then((cache) => cache.addAll(['./','./index.html','./manifest.json'])));
 });
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
-  );
+  event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)));
 });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>바둑 트레이너 v2</title>
+  <title>바둑 트레이너 v3</title>
   <meta name="theme-color" content="#111827" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -13,16 +13,19 @@
     :root{
       --bg:#f3f4f6; --card:#fff; --text:#111827; --muted:#6b7280; --line:#d1d5db;
       --accent:#111827; --wood:#d4a15d; --good:#059669; --bad:#dc2626;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
-    .app{max-width:1200px;margin:0 auto;padding:16px}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
-    .title{font-size:28px;font-weight:800}
-    .subtitle{font-size:13px;color:var(--muted)}
-    .row{display:grid;grid-template-columns:280px 1fr;gap:16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 10px 25px rgba(0,0,0,0.04)}
-    .menu button,.btn{display:block;width:100%;border:none;background:#f9fafb;border:1px solid var(--line);padding:12px 14px;border-radius:14px;text-align:left;font-weight:700;color:var(--text);cursor:pointer}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif}
+    body{padding-top:var(--safe-top)}
+    .app{max-width:1200px;margin:0 auto;padding:12px 12px calc(84px + var(--safe-bottom))}
+    .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+    .title{font-size:24px;font-weight:800;line-height:1.2}
+    .subtitle{font-size:12px;color:var(--muted);margin-top:4px}
+    .desktop-layout{display:grid;grid-template-columns:280px 1fr;gap:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 10px 25px rgba(0,0,0,0.04)}
+    .menu button,.btn{display:block;width:100%;border:none;background:#f9fafb;border:1px solid var(--line);padding:14px 14px;border-radius:14px;text-align:left;font-weight:700;color:var(--text);cursor:pointer;font-size:15px}
     .menu button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
     .menu button+button,.stack>*+*{margin-top:10px}
     .muted{color:var(--muted)}
@@ -31,31 +34,44 @@
     .stat{padding:14px;border-radius:16px;background:#f9fafb;border:1px solid var(--line)}
     .stat .n{font-size:24px;font-weight:800}
     .space{display:flex;justify-content:space-between;align-items:center;gap:10px}
-    .badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:700}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:700}
     .badge.ok{background:#ecfdf5;color:#065f46}
     .badge.warn{background:#fff7ed;color:#9a3412}
-    .section-title{font-size:20px;font-weight:800;margin:0 0 12px}
+    .section-title{font-size:19px;font-weight:800;margin:0 0 12px}
     .lesson-item,.quiz-item{padding:14px;border:1px solid var(--line);border-radius:16px;background:#fafafa;cursor:pointer}
     .lesson-item.active,.quiz-item.active{outline:2px solid #111827}
     .small{font-size:12px}
     .board-wrap{overflow:auto;padding:8px;background:#fff;border-radius:16px;border:1px solid var(--line)}
-    canvas{background:#d4a15d;touch-action:manipulation;border-radius:16px;display:block;width:100%;max-width:760px;height:auto}
+    canvas{background:#d4a15d;touch-action:none;border-radius:16px;display:block;width:100%;max-width:760px;height:auto;margin:0 auto}
     .pillbar{display:flex;gap:8px;flex-wrap:wrap}
-    .pillbar button{border:1px solid var(--line);background:#fff;padding:8px 10px;border-radius:999px;cursor:pointer;font-weight:700}
+    .pillbar button{border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:999px;cursor:pointer;font-weight:700}
     .pillbar button.active{background:#111827;color:#fff;border-color:#111827}
-    .hint{padding:12px 14px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:14px}
+    .hint{padding:12px 14px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:14px;line-height:1.55}
     .answer{padding:12px 14px;border-radius:14px;line-height:1.6}
     .answer.good{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
     .answer.bad{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
-    input[type=text]{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:16px}
+    input[type=text]{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);font-size:16px}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap}
-    .toolbar .btn{width:auto;text-align:center;background:#111827;color:#fff;border-color:#111827}
+    .toolbar .btn{width:auto;text-align:center;background:#111827;color:#fff;border-color:#111827;min-height:46px}
     .btn.secondary{background:#fff;color:#111827}
-    .list{padding-left:18px}
+    .list{padding-left:18px;line-height:1.7}
     .two-col{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    .mobile-nav{display:none}
+    .mobile-nav-inner{position:fixed;left:0;right:0;bottom:0;padding:8px 10px calc(8px + var(--safe-bottom));background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);z-index:50}
+    .mobile-nav-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    .mobile-tab{border:1px solid var(--line);background:#fff;border-radius:14px;padding:8px 4px;font-size:11px;font-weight:700;text-align:center;line-height:1.2;cursor:pointer;min-height:54px;display:flex;align-items:center;justify-content:center}
+    .mobile-tab.active{background:#111827;color:#fff;border-color:#111827}
+    .sticky-tools{position:sticky;top:8px;z-index:10}
+    .notice{padding:10px 12px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:13px;line-height:1.5}
     @media (max-width:900px){
-      .row,.two-col,.grid2,.grid3{grid-template-columns:1fr}
-      .title{font-size:24px}
+      .desktop-layout,.two-col,.grid2,.grid3{grid-template-columns:1fr}
+      .title{font-size:22px}
+      .app{padding:10px 10px calc(92px + var(--safe-bottom))}
+      .desktop-menu{display:none}
+      .mobile-nav{display:block}
+      .card{padding:12px}
+      .section-title{font-size:18px}
+      .topbar{margin-bottom:10px}
     }
   </style>
 </head>
@@ -63,34 +79,14 @@
 <div class="app" id="app"></div>
 
 <script>
-const STORAGE_KEY = 'baduk_trainer_v2_state';
+const STORAGE_KEY = 'baduk_trainer_v3_state';
 
 const lectures = [
-  {id:'l1', title:'활로의 개념', level:'기초', content:[
-    '활로는 돌 또는 연결된 돌무리가 숨 쉴 수 있는 빈 칸입니다.',
-    '상대가 내 활로를 모두 막으면 그 돌은 잡힙니다.',
-    '바둑의 가장 기본은 활로를 계산하는 습관입니다.'
-  ]},
-  {id:'l2', title:'단수와 응수', level:'기초', content:[
-    '상대 돌의 활로가 1개만 남은 상태를 단수라고 합니다.',
-    '단수를 당하면 보통 연결하거나 상대를 역단수하는 식으로 대응합니다.',
-    '단수는 공격과 방어를 동시에 배우는 핵심 개념입니다.'
-  ]},
-  {id:'l3', title:'연결과 절단', level:'중급 입문', content:[
-    '연결은 내 돌의 안전을 키우고, 절단은 상대를 약하게 만듭니다.',
-    '무조건 큰 곳보다 끊기는 곳을 먼저 보는 습관이 중요합니다.',
-    '실전에서는 약한 돌, 끊기는 점, 두터운 방향을 같이 봐야 합니다.'
-  ]},
-  {id:'l4', title:'축의 기본', level:'중급 입문', content:[
-    '축은 상대 돌을 비스듬히 몰아 잡는 전형적 수법입니다.',
-    '축은 길이 열려 있는지, 중간에 축머리가 있는지 확인해야 합니다.',
-    '실전에서 축을 읽는 힘은 전투 정확도를 크게 올려줍니다.'
-  ]},
-  {id:'l5', title:'형세 판단의 시작', level:'중급 입문', content:[
-    '당장 집이 많아 보여도 약한 돌이 많으면 형세가 나쁠 수 있습니다.',
-    '집, 세력, 약한 돌, 선후수 네 가지를 함께 보아야 합니다.',
-    '초반에는 작게 이득 보기보다 판 전체 방향이 더 중요할 때가 많습니다.'
-  ]}
+  {id:'l1', title:'활로의 개념', level:'기초', content:['활로는 돌 또는 연결된 돌무리가 숨 쉴 수 있는 빈 칸입니다.','상대가 내 활로를 모두 막으면 그 돌은 잡힙니다.','바둑의 가장 기본은 활로를 계산하는 습관입니다.']},
+  {id:'l2', title:'단수와 응수', level:'기초', content:['상대 돌의 활로가 1개만 남은 상태를 단수라고 합니다.','단수를 당하면 보통 연결하거나 상대를 역단수하는 식으로 대응합니다.','단수는 공격과 방어를 동시에 배우는 핵심 개념입니다.']},
+  {id:'l3', title:'연결과 절단', level:'중급 입문', content:['연결은 내 돌의 안전을 키우고, 절단은 상대를 약하게 만듭니다.','무조건 큰 곳보다 끊기는 곳을 먼저 보는 습관이 중요합니다.','실전에서는 약한 돌, 끊기는 점, 두터운 방향을 같이 봐야 합니다.']},
+  {id:'l4', title:'축의 기본', level:'중급 입문', content:['축은 상대 돌을 비스듬히 몰아 잡는 전형적 수법입니다.','축은 길이 열려 있는지, 중간에 축머리가 있는지 확인해야 합니다.','실전에서 축을 읽는 힘은 전투 정확도를 크게 올려줍니다.']},
+  {id:'l5', title:'형세 판단의 시작', level:'중급 입문', content:['당장 집이 많아 보여도 약한 돌이 많으면 형세가 나쁠 수 있습니다.','집, 세력, 약한 돌, 선후수 네 가지를 함께 보아야 합니다.','초반에는 작게 이득 보기보다 판 전체 방향이 더 중요할 때가 많습니다.']}
 ];
 
 const quizzes = [
@@ -117,17 +113,12 @@ function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? {...structuredClone(defaultState), ...JSON.parse(raw)} : structuredClone(defaultState);
-  }catch(e){
-    return structuredClone(defaultState);
-  }
+  }catch(e){ return structuredClone(defaultState); }
 }
 function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 let state = loadState();
 
-function percent(){
-  const total = quizzes.length || 1;
-  return Math.round((state.progress.solvedQuizzes.length / total)*100);
-}
+function percent(){ const total = quizzes.length || 1; return Math.round((state.progress.solvedQuizzes.length / total)*100); }
 function weaknessText(){
   if(state.progress.wrongCount >= 3) return '약점 유형: 단수 대응 / 형세 판단';
   if(state.progress.wrongCount >= 1) return '약점 유형: 축 / 절단';
@@ -141,14 +132,14 @@ function render(){
   app.innerHTML = `
     <div class="topbar">
       <div>
-        <div class="title">바둑 트레이너 v2</div>
-        <div class="subtitle">아이폰 터치 좌표 보정 · 흑/백 마지막 착수 표시 · 오답 즉시 해설</div>
+        <div class="title">바둑 트레이너 v3</div>
+        <div class="subtitle">아이폰 최적화 UI · 하단 탭 메뉴 · 큰 버튼 · 터치 안정성 개선</div>
       </div>
       <div class="badge ${state.user.loggedIn ? 'ok' : 'warn'}">${state.user.loggedIn ? '학습 세션 활성' : '로그인 필요'}</div>
     </div>
 
-    <div class="row">
-      <div class="card">
+    <div class="desktop-layout">
+      <div class="card desktop-menu">
         <div class="menu">
           <button class="${state.activeView==='dashboard'?'active':''}" onclick="setView('dashboard')">홈 대시보드</button>
           <button class="${state.activeView==='lectures'?'active':''}" onclick="setView('lectures')">강의형 학습</button>
@@ -159,6 +150,18 @@ function render(){
         </div>
       </div>
       <div>${renderView()}</div>
+    </div>
+
+    <div class="mobile-nav">
+      <div class="mobile-nav-inner">
+        <div class="mobile-nav-grid">
+          <button class="mobile-tab ${state.activeView==='dashboard'?'active':''}" onclick="setView('dashboard')">홈</button>
+          <button class="mobile-tab ${state.activeView==='lectures'?'active':''}" onclick="setView('lectures')">강의</button>
+          <button class="mobile-tab ${state.activeView==='quizzes'?'active':''}" onclick="setView('quizzes')">문제</button>
+          <button class="mobile-tab ${state.activeView==='game'?'active':''}" onclick="setView('game')">대국</button>
+          <button class="mobile-tab ${state.activeView==='review'?'active':''}" onclick="setView('review')">복습</button>
+        </div>
+      </div>
     </div>
   `;
   if(state.activeView==='game') drawBoard();
@@ -254,9 +257,7 @@ function renderQuizzes(){
       <div class="stack" style="margin-top:14px">
         ${quiz.choices.map((c,i)=>`<button class="btn secondary" onclick="answerQuiz('${quiz.id}', ${i})">${i+1}. ${c}</button>`).join('')}
       </div>
-      <div style="margin-top:14px">
-        ${renderQuizResult()}
-      </div>
+      <div style="margin-top:14px">${renderQuizResult()}</div>
     </div>
     <div class="card">
       <div class="section-title">문제 목록</div>
@@ -272,13 +273,7 @@ function renderQuizzes(){
 function renderQuizResult(){
   if(!state.quizResult) return '<div class="hint">정답을 선택하면 바로 채점과 해설이 표시됩니다.</div>';
   const r = state.quizResult;
-  return `
-    <div class="answer ${r.correct ? 'good' : 'bad'}">
-      <strong>${r.correct ? '정답입니다.' : '틀렸습니다.'}</strong>
-      <div style="margin-top:8px">정답: ${r.answerText}</div>
-      <div style="margin-top:8px"><strong>풀이</strong><br>${r.explanation}</div>
-    </div>
-  `;
+  return `<div class="answer ${r.correct ? 'good' : 'bad'}"><strong>${r.correct ? '정답입니다.' : '틀렸습니다.'}</strong><div style="margin-top:8px">정답: ${r.answerText}</div><div style="margin-top:8px"><strong>풀이</strong><br>${r.explanation}</div></div>`;
 }
 
 function answerQuiz(id, choice){
@@ -293,37 +288,33 @@ function answerQuiz(id, choice){
   if(!correct){
     state.notes.unshift({id:Date.now(), type:'quiz', title:quiz.title, note:quiz.explanation});
   }
-  state.quizResult = {
-    correct,
-    answerText: quiz.choices[quiz.correct],
-    explanation: quiz.explanation
-  };
-  saveState();
-  render();
+  state.quizResult = { correct, answerText: quiz.choices[quiz.correct], explanation: quiz.explanation };
+  saveState(); render();
 }
 
 function renderGame(){
   return `
   <div class="stack">
-    <div class="card">
+    <div class="card sticky-tools">
       <div class="space">
         <div>
           <div class="section-title">19줄 AI 대국</div>
           <div class="muted">현재 모드: ${state.game.mode === 'tutor' ? '설명형 AI' : '실전형 AI'}</div>
         </div>
         <div class="pillbar">
-          <button class="${state.game.mode==='tutor'?'active':''}" onclick="setGameMode('tutor')">설명형 AI</button>
-          <button class="${state.game.mode==='practical'?'active':''}" onclick="setGameMode('practical')">실전형 AI</button>
+          <button class="${state.game.mode==='tutor'?'active':''}" onclick="setGameMode('tutor')">설명형</button>
+          <button class="${state.game.mode==='practical'?'active':''}" onclick="setGameMode('practical')">실전형</button>
         </div>
+      </div>
+      <div class="toolbar" style="margin-top:10px">
+        <button class="btn" onclick="passTurn()">패스</button>
+        <button class="btn secondary" onclick="resetGame()">새 대국</button>
       </div>
     </div>
     <div class="two-col">
       <div class="card">
-        <div class="board-wrap"><canvas id="board" width="760" height="760"></canvas></div>
-        <div class="toolbar" style="margin-top:12px">
-          <button class="btn" onclick="passTurn()">패스</button>
-          <button class="btn secondary" onclick="resetGame()">새 대국</button>
-        </div>
+        <div class="notice">아이폰에서는 바둑판을 한 번 가볍게 확대해서 쓰면 터치 정확도가 더 좋아집니다.</div>
+        <div class="board-wrap" style="margin-top:10px"><canvas id="board" width="760" height="760"></canvas></div>
       </div>
       <div class="stack">
         <div class="card">
@@ -336,7 +327,7 @@ function renderGame(){
             <li>초반에는 귀, 변, 중앙의 우선순위를 의식해 보세요.</li>
             <li>끊기는 돌이 없는지 먼저 확인하세요.</li>
             <li>큰 곳과 급한 곳을 구분하는 습관이 중요합니다.</li>
-            <li>각 플레이어의 마지막 착수는 표시 점으로 확인할 수 있습니다.</li>
+            <li>흑/백 각각 마지막 착수는 작은 점으로 표시됩니다.</li>
           </ul>
         </div>
       </div>
@@ -352,12 +343,7 @@ function renderReview(){
       <div class="muted">틀린 문제와 실수 설명을 저장합니다.</div>
     </div>
     <div class="card">
-      ${state.notes.length ? state.notes.map(n=>`
-        <div class="lesson-item" style="cursor:default">
-          <div class="space"><strong>${n.title}</strong><span class="badge">${n.type}</span></div>
-          <div class="muted small" style="margin-top:6px">${n.note}</div>
-        </div>
-      `).join('') : '<div class="hint">아직 오답노트가 없습니다. 문제를 풀거나 대국에서 실수를 기록하면 여기에 표시됩니다.</div>'}
+      ${state.notes.length ? state.notes.map(n=>`<div class="lesson-item" style="cursor:default"><div class="space"><strong>${n.title}</strong><span class="badge">${n.type}</span></div><div class="muted small" style="margin-top:6px">${n.note}</div></div>`).join('') : '<div class="hint">아직 오답노트가 없습니다. 문제를 풀거나 대국에서 실수를 기록하면 여기에 표시됩니다.</div>'}
     </div>
   </div>`;
 }
@@ -366,8 +352,8 @@ function renderSettings(){
   return `
   <div class="stack">
     <div class="card">
-      <div class="section-title">시작 설정</div>
-      <div class="muted">현재 버전은 로컬 저장 기반 MVP입니다.</div>
+      <div class="section-title">설정 / 시작</div>
+      <div class="muted">현재 버전은 아이폰 사용성 개선판입니다.</div>
       <div class="stack" style="margin-top:14px">
         <div>
           <label class="small muted">학습자 이름</label>
@@ -382,9 +368,9 @@ function renderSettings(){
     <div class="card">
       <div class="section-title">아이폰 사용 팁</div>
       <ol class="list">
-        <li>Safari로 사이트를 엽니다.</li>
-        <li>공유 버튼을 누릅니다.</li>
-        <li>홈 화면에 추가를 누릅니다.</li>
+        <li>하단 메뉴로 화면 이동이 더 쉬워졌습니다.</li>
+        <li>대국 화면에서는 상단 도구 영역이 항상 보입니다.</li>
+        <li>홈 화면 아이콘으로 실행하면 앱처럼 쓸 수 있습니다.</li>
       </ol>
     </div>
   </div>`;
@@ -395,27 +381,21 @@ function login(){
   const name = document.getElementById('username').value.trim();
   state.user.name = name || '학습자';
   state.user.loggedIn = true;
-  saveState();
-  render();
+  saveState(); render();
 }
 function completeLecture(id){
   if(!state.progress.completedLectures.includes(id)) state.progress.completedLectures.push(id);
-  saveState();
-  render();
+  saveState(); render();
 }
 function resetAll(){
   if(!confirm('모든 학습 기록을 초기화할까요?')) return;
   state = structuredClone(defaultState);
-  saveState();
-  render();
+  saveState(); render();
 }
 function setGameMode(mode){
   state.game.mode = mode;
-  state.game.lastComment = mode === 'tutor'
-    ? '설명형 AI로 전환했습니다. 큰 곳과 약한 돌을 같이 보세요.'
-    : '실전형 AI로 전환했습니다. 설명은 줄이고 진행 속도를 높입니다.';
-  saveState();
-  render();
+  state.game.lastComment = mode === 'tutor' ? '설명형 AI로 전환했습니다. 큰 곳과 약한 돌을 같이 보세요.' : '실전형 AI로 전환했습니다. 설명은 줄이고 진행 속도를 높입니다.';
+  saveState(); render();
 }
 
 /* Board */
@@ -430,42 +410,30 @@ let board = emptyBoard();
 
 function rebuildBoardFromMoves(){
   board = emptyBoard();
-  for(const mv of state.game.moves){
-    board[mv.y][mv.x] = mv.color==='black' ? BLACK : WHITE;
-  }
+  for(const mv of state.game.moves){ board[mv.y][mv.x] = mv.color==='black' ? BLACK : WHITE; }
 }
-
 function resetGame(){
   state.game.moves = [];
   state.game.currentTurn = 'black';
   state.game.lastComment = '새 대국을 시작했습니다. 첫 수는 귀 쪽 큰 자리부터 의식해 보세요.';
-  saveState();
-  render();
+  saveState(); render();
 }
-
 function passTurn(){
   state.game.currentTurn = state.game.currentTurn === 'black' ? 'white' : 'black';
-  state.game.lastComment = state.game.mode==='tutor'
-    ? '패스를 선택했습니다. 형세상 정말 패스가 필요한지 항상 점검하세요.'
-    : '패스.';
-  saveState();
-  render();
-  if(state.game.currentTurn === 'white') setTimeout(aiMove, 250);
+  state.game.lastComment = state.game.mode==='tutor' ? '패스를 선택했습니다. 형세상 정말 패스가 필요한지 항상 점검하세요.' : '패스.';
+  saveState(); render();
+  if(state.game.currentTurn === 'white') setTimeout(aiMove, 220);
 }
 
 function drawBoard(){
   const c = document.getElementById('board');
   if(!c) return;
-
-  c.width = INTERNAL_SIZE;
-  c.height = INTERNAL_SIZE;
-
+  c.width = INTERNAL_SIZE; c.height = INTERNAL_SIZE;
   rebuildBoardFromMoves();
   const ctx = c.getContext('2d');
   ctx.clearRect(0,0,INTERNAL_SIZE,INTERNAL_SIZE);
   ctx.fillStyle = '#d4a15d';
   ctx.fillRect(0,0,INTERNAL_SIZE,INTERNAL_SIZE);
-
   ctx.strokeStyle = '#7c4a16';
   ctx.lineWidth = 1.2;
   for(let i=0;i<BOARD_SIZE;i++){
@@ -473,32 +441,24 @@ function drawBoard(){
     ctx.beginPath(); ctx.moveTo(MARGIN,p); ctx.lineTo(INTERNAL_SIZE-MARGIN,p); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(p,MARGIN); ctx.lineTo(p,INTERNAL_SIZE-MARGIN); ctx.stroke();
   }
-
   [[3,3],[9,3],[15,3],[3,9],[9,9],[15,9],[3,15],[9,15],[15,15]].forEach(([x,y])=>{
     const px = MARGIN + x*GAP, py = MARGIN + y*GAP;
     ctx.beginPath(); ctx.arc(px,py,4,0,Math.PI*2); ctx.fillStyle='#4b2e12'; ctx.fill();
   });
 
-  let lastBlack = null;
-  let lastWhite = null;
-  for(const mv of state.game.moves){
-    if(mv.color === 'black') lastBlack = mv;
-    else lastWhite = mv;
-  }
+  let lastBlack = null, lastWhite = null;
+  for(const mv of state.game.moves){ if(mv.color==='black') lastBlack = mv; else lastWhite = mv; }
 
   for(const mv of state.game.moves){
     const px = MARGIN + mv.x*GAP, py = MARGIN + mv.y*GAP;
-    ctx.beginPath();
-    ctx.arc(px,py,GAP*0.42,0,Math.PI*2);
+    ctx.beginPath(); ctx.arc(px,py,GAP*0.42,0,Math.PI*2);
     ctx.fillStyle = mv.color==='black' ? '#111' : '#f7f7f7';
     ctx.fill();
     ctx.strokeStyle = mv.color==='black' ? '#000' : '#888';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    ctx.lineWidth = 2; ctx.stroke();
 
     if((lastBlack && mv === lastBlack) || (lastWhite && mv === lastWhite)){
-      ctx.beginPath();
-      ctx.arc(px,py,GAP*0.12,0,Math.PI*2);
+      ctx.beginPath(); ctx.arc(px,py,GAP*0.12,0,Math.PI*2);
       ctx.fillStyle = mv.color==='black' ? '#f7f7f7' : '#111';
       ctx.fill();
     }
@@ -510,29 +470,22 @@ function drawBoard(){
     const scaleY = c.height / rect.height;
     const canvasX = (clientX - rect.left) * scaleX;
     const canvasY = (clientY - rect.top) * scaleY;
-
     const x = Math.round((canvasX - MARGIN) / GAP);
     const y = Math.round((canvasY - MARGIN) / GAP);
-
     if(x<0||x>=BOARD_SIZE||y<0||y>=BOARD_SIZE) return;
-    const px = MARGIN + x*GAP;
-    const py = MARGIN + y*GAP;
-    const tolerance = GAP * 0.5;
+    const px = MARGIN + x*GAP, py = MARGIN + y*GAP;
+    const tolerance = GAP * 0.55;
     if(Math.abs(canvasX - px) > tolerance || Math.abs(canvasY - py) > tolerance) return;
     if(state.game.currentTurn !== 'black') return;
     if(board[y][x] !== EMPTY) return;
-
     placeStone(x,y,'black');
-    if(state.game.currentTurn === 'white') setTimeout(aiMove, 250);
+    if(state.game.currentTurn === 'white') setTimeout(aiMove, 220);
   };
 
   c.onclick = (e) => handlePointer(e.clientX, e.clientY);
   c.ontouchstart = (e) => {
     const t = e.touches[0];
-    if(t){
-      handlePointer(t.clientX, t.clientY);
-      e.preventDefault();
-    }
+    if(t){ handlePointer(t.clientX, t.clientY); e.preventDefault(); }
   };
 }
 
@@ -541,20 +494,15 @@ function placeStone(x,y,color){
   board[y][x] = color==='black' ? BLACK : WHITE;
   state.game.currentTurn = color==='black' ? 'white' : 'black';
   state.game.lastComment = buildComment(x,y,color);
-  saveState();
-  render();
+  saveState(); render();
 }
-
 function buildComment(x,y,color){
   const cornerDist = Math.min(x+y, x+(18-y), (18-x)+y, (18-x)+(18-y));
-  if(state.game.mode === 'practical'){
-    return color==='black' ? '착수 완료.' : 'AI 응수 완료.';
-  }
+  if(state.game.mode === 'practical') return color==='black' ? '착수 완료.' : 'AI 응수 완료.';
   if(cornerDist <= 6) return '귀 쪽 큰 자리에 두었습니다. 초반 기본 감각으로 나쁘지 않습니다.';
   if(x>5 && x<13 && y>5 && y<13) return '중앙 쪽 착수입니다. 초반에는 중앙보다 귀와 변이 더 클 때가 많습니다.';
   return '방향은 무난합니다. 다음 수에서는 약한 돌과 끊김 여부를 함께 확인해 보세요.';
 }
-
 function aiMove(){
   rebuildBoardFromMoves();
   const candidates = [];
@@ -586,7 +534,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   });
 }
-
 render();
 </script>
 </body>
