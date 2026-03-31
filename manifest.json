@@ -1,5 +1,5 @@
 {
-  "name": "바둑 트레이너 v1",
+  "name": "바둑 트레이너 v2",
   "short_name": "바둑트레이너",
   "start_url": "./index.html",
   "display": "standalone",
